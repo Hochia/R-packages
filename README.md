@@ -1,1 +1,1 @@
-Notes for R packages written by Hadley and Jennifer
+Notes for [R packages](https://r-pkgs.org/).
