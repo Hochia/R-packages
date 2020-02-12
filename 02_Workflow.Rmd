@@ -1,0 +1,183 @@
+---
+title: "02_Workflow"
+author: "Hochia"
+date: "2020/2/11"
+output: html_document
+---
+
+<style>
+p, pre.r {
+  font-size: 20px;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+## 摘要
+
+開發一個套件所需的基本步驟，這些步驟在後續的章節有更詳盡的說明。
+
+## 預備
+
+```{r}
+library(devtools)
+library(roxygen2)
+library(testthat)
+library(tidyverse)
+library(fs) # present filesystem work
+```
+
+## 套件
+
+在一個獨立的資料夾建立套件，比如指定在桌面，不需要手動先建立 `foofactors` 資料夾:
+
+```{r}
+create_package()
+create_package("~/Desktop/foofactors")
+```
+
+RStudio 會自動在新視窗開啟 `foofactors` 專案，在工作面板會出現 *Build*。
+
+*介紹資料夾裡各個檔案的用處*
+
+使用 Git 作為版本管理工具，將資料夾初始化成 Git 儲存庫，只要使用以下命令:
+
+```{r}
+use_git()
+```
+
+重啟專案後，工作面板會出現 *Git*。
+
+終於，我們要開始豐富套件的內容了。
+
+```{r}
+fbind <- function(a, b) {
+  factor(c(as.character(a), as.character(b)))
+}
+```
+
+我們把每個函式分別定義在 `.R` 檔案，並放到 `R/` 目錄下，比如 `R/fbind.R`。
+
+```{r}
+use_r("fbind")
+```
+
+注意，檔案中只包括該函式的程式碼，勿加入其他指令。
+
+將完成的函式載入，類似 `library(foofactor)` 的意思:
+
+```{r}
+load_all()
+```
+
+此時可以在 Git 上提交。
+
+為了確認套件能順利運行，時常進行檢查也無妨:
+
+```{r}
+check()
+```
+
+打開資料夾中的 `DESCRIPTION` 檔案，
+對套件進行說明，更新作者、證照等內容後提交。
+
+無論如何，就選一種證照來使用:
+
+```{r}
+use_mit_license("Hochia")
+```
+
+對於要發布到如 GitHub 上的套件，
+包含一個完整的證照是好的作法。
+
+到此，我們還可以為函式做出說明，也就是說明文件，
+比如 `man/fbind.Rd`。
+
+開啟 `R/fbind.R`，讓編輯游標停在函式中，點擊 *Code > Insert roxygen skeleton*。編輯完成後提交，
+**但還沒完成**，
+讓說明文件自動產生在 `man/fbind.Rd` 裡:
+
+```{r}
+document()
+```
+
+這時就能看到常見的說明文件了:
+
+```{r}
+?fbind
+```
+
+另外，在此同時 NAMESPACE 也會自動修改，NAMESPACE 紀錄所有在 `library(foofactors)` 可被使用的函式。
+
+再一次提交。
+
+安裝套件到當前使用的 R 版本下的 library:
+
+```{r}
+install()
+```
+
+在 R 重啟後，就能使用該套件了:
+
+```{r}
+library(foofactors)
+```
+
+為了進行正式的單元測試:
+
+```{r}
+use_testthat()
+```
+
+會自動產生需要的資料夾，並且修改 DESCRIPTION，
+此時可以先提交。
+
+當然，要進行什麼樣的測試由作者決定。
+對函式新增測試檔案:
+
+```{r}
+use_test("fbind")
+```
+
+對全體函式進行測試:
+
+```{r}
+test()
+```
+
+除了自己寫函式，有時也會應用其他套件的函式:
+
+```{r}
+use_package("forcats")
+```
+
+DESCRIPTION 被修改後就能提交了。
+
+可以編寫自己的函式，
+
+```{r}
+use_r("fcount")
+```
+
+寫完這些函式後，就可以著手寫 README 文件了:
+
+```{r}
+use_readme_rmd()
+```
+
+在 Knit 之前，記得要先安裝套件:
+
+```{r}
+install()
+```
+
+Knit 完成會出現 `.md` 檔，此時可進行提交。
+
+最後的最後，再次檢查套件是否有任何問題:
+
+```{r}
+check()
+install()
+```
